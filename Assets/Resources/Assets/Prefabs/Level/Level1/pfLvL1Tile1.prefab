@@ -45,6 +45,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -56,6 +57,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1709,6 +1711,10 @@ PrefabInstance:
     - target: {fileID: 100064, guid: 23f6ea46e3d14b2428e3463a084f82c5, type: 3}
       propertyPath: m_Name
       value: mouse10
+      objectReference: {fileID: 0}
+    - target: {fileID: 100064, guid: 23f6ea46e3d14b2428e3463a084f82c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400064, guid: 23f6ea46e3d14b2428e3463a084f82c5, type: 3}
       propertyPath: m_LocalPosition.x
