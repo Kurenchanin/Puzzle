@@ -73,7 +73,7 @@ public class MoveCommand : ICommand
   bool finish;
   bool rotationDone;
 
-  float rotationSpeed = 30;
+  float rotationSpeed = 10;
   public MoveCommand(GameObject go)
   {
     this.go = go;
@@ -83,13 +83,13 @@ public class MoveCommand : ICommand
   {    
     if (!finish) 
     { //следим за пальцем пользователя
-      go.transform.Rotate(0, angle * 4, 0); //move to constants
+      go.transform.Rotate(0, angle * 8, 0); //move to constants
     }
     else 
     {
-       go.transform.localRotation = Quaternion.Lerp(go.transform.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
-
-      if(Quaternion.Angle(go.transform.localRotation, targetRotation) < 0.005f) {
+      go.transform.localRotation = Quaternion.Lerp(go.transform.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
+      var angle = Quaternion.Angle(go.transform.localRotation, targetRotation);
+      if(angle < 0.5f) {
         go.transform.localRotation = targetRotation;
         rotationDone = true;
       }
