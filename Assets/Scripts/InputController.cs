@@ -8,15 +8,14 @@ public class InputController : MonoBehaviour
   [SerializeField]
   Camera camera;
 
+  [SerializeField]
+  float tapTolerance = .2f;
+
   float cameraZ;
-  
   bool mousePressed;
   Vector3 previousMousePosition;
-
   float pressedTimestamp;
-
-  [SerializeField]
-  float tapTolerance = .5f;
+  bool holdFired;
 
   void Start()
   {
@@ -29,6 +28,28 @@ public class InputController : MonoBehaviour
     HandleMouseReleased();
   }
 
+  void FireClickEvent() 
+  {    
+    Debug.LogError("Click event");
+  }
+
+  void FireHoldEvent()
+  {
+    SelectTile(Input.mousePosition);
+  }
+
+  void FireMoveEvent()
+  {
+    var pos = GetWorldMousePos();    
+    ProcessMove(pos);
+    previousMousePosition = pos;
+  }
+
+  void FireReleaseEvent()
+  {
+    DeselectTile();
+  }
+
   void HandleMousePressed()
   {
     if(!Input.GetMouseButton(0))
@@ -36,17 +57,46 @@ public class InputController : MonoBehaviour
 
     if(!mousePressed)
     {
-      SelectTile(Input.mousePosition);
-      mousePressed = true;
+      if(tapTolerance > 0)
+      {
+        mousePressed = true;
+        previousMousePosition = GetWorldMousePos();
+        pressedTimestamp = Time.time;
+        return;
+      }
 
+      if(!holdFired)
+      {
+        FireHoldEvent();
+        holdFired = true;
+      }
+      
+      mousePressed = true;
       previousMousePosition = GetWorldMousePos();
       return;
     }
+
     
-    var pos = GetWorldMousePos();
-    //it was pressed on previous frame
-    ProcessMove(pos);
-    previousMousePosition = pos;
+    if(tapTolerance > 0)
+    {
+      var diff = Time.time - pressedTimestamp;
+      if (diff > tapTolerance)
+      {
+        if(!holdFired) 
+        {
+          FireHoldEvent();
+          holdFired = true;
+        }
+        else
+          FireMoveEvent();
+      }
+      return;
+    }
+    
+    if(holdFired) 
+    {
+      FireMoveEvent();
+    }
   }
 
   Vector3 GetWorldMousePos()
@@ -61,8 +111,22 @@ public class InputController : MonoBehaviour
     if(Input.GetMouseButton(0) || !mousePressed)
       return;
 
-    DeselectTile();
-    mousePressed = false;
+    if(tapTolerance > 0)
+    {
+      var diff = Time.time - pressedTimestamp;
+      if (diff <= tapTolerance)
+      {
+        FireClickEvent();
+      }      
+    }      
+
+    if(holdFired) 
+    {
+      FireReleaseEvent();
+      holdFired = false;
+    }
+    
+    mousePressed = false;    
   }
 
   Tile selectedTile;
