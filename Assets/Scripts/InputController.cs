@@ -8,8 +8,7 @@ public class InputController : MonoBehaviour
   [SerializeField]
   Camera camera;
 
-  [SerializeField]
-  float zPos = 35; //TODO: get from camera?
+  float cameraZ;
   
   bool mousePressed;
   Vector3 previousMousePosition;
@@ -18,6 +17,11 @@ public class InputController : MonoBehaviour
 
   [SerializeField]
   float tapTolerance = .5f;
+
+  void Start()
+  {
+    cameraZ = camera.gameObject.transform.position.z;
+  }
 
   void Update()
   {
@@ -48,7 +52,7 @@ public class InputController : MonoBehaviour
   Vector3 GetWorldMousePos()
   {
     var mousePos = Input.mousePosition;
-    mousePos.z = zPos;
+    mousePos.z = cameraZ;
     return camera.ScreenToWorldPoint(mousePos);
   }
 
