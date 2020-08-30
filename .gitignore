@@ -2,3 +2,5 @@ Library/
 .vscode/
 Temp/
 Bin/
+*.csproj
+*.sln
