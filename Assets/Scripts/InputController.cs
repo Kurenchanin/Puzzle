@@ -3,59 +3,62 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class LevelController : MonoBehaviour
+public class InputController : MonoBehaviour
 {
-  [SerializeField]
-  List<Tile> tiles;
-
   [SerializeField]
   Camera camera;
 
-  void Start()
-  {
-
-  }
-
-
+  [SerializeField]
+  float zPos = 35; //TODO: get from camera?
   
   bool mousePressed;
   Vector3 previousMousePosition;
-  void Update()
-  { 
-    if(Input.GetMouseButton(0)) 
-    {
-      if(mousePressed)
-      {
-         var mousePos = Input.mousePosition;
-         mousePos.z = 35;
-        var pos = camera.ScreenToWorldPoint(mousePos);
 
-        //it was pressed on previous frame
-        ProcessMove(pos);
-        previousMousePosition = pos;
-      } 
-      else
-      {
-        SelectTile(Input.mousePosition);
-        mousePressed = true;
-        
-        var mousePos = Input.mousePosition;
-        mousePos.z = 35;
-        previousMousePosition = camera.ScreenToWorldPoint(mousePos);
-      }
-    }
-    else 
+  float pressedTimestamp;
+
+  [SerializeField]
+  float tapTolerance = .5f;
+
+  void Update()
+  {
+    HandleMousePressed();
+    HandleMouseReleased();
+  }
+
+  void HandleMousePressed()
+  {
+    if(!Input.GetMouseButton(0))
+      return;
+
+    if(!mousePressed)
     {
-      if(mousePressed) 
-      {
-        DeselectTile();
-        mousePressed = false;
-      }
-      else
-      {
-        //do nothing
-      }
+      SelectTile(Input.mousePosition);
+      mousePressed = true;
+
+      previousMousePosition = GetWorldMousePos();
+      return;
     }
+    
+    var pos = GetWorldMousePos();
+    //it was pressed on previous frame
+    ProcessMove(pos);
+    previousMousePosition = pos;
+  }
+
+  Vector3 GetWorldMousePos()
+  {
+    var mousePos = Input.mousePosition;
+    mousePos.z = zPos;
+    return camera.ScreenToWorldPoint(mousePos);
+  }
+
+  void HandleMouseReleased()
+  {
+    if(Input.GetMouseButton(0) || !mousePressed)
+      return;
+
+    DeselectTile();
+    mousePressed = false;
   }
 
   Tile selectedTile;
@@ -100,7 +103,6 @@ public class LevelController : MonoBehaviour
     var a = previousMousePosition - tilePosition;
     var b = mousePosition - tilePosition;
     var angle = Vector3.SignedAngle(a, b, Vector3.up);
-    //Debug.LogError($"Angle = {angle}");
 
     selectedTile.ProcessMove(angle);
   }
