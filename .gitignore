@@ -1,6 +1,9 @@
 Library/
 .vscode/
+.idea/
 Temp/
 Bin/
+obj/
+
 *.csproj
 *.sln
